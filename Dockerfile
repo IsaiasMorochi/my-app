@@ -1,3 +1,8 @@
+FROM maven:3.5.2-jdk-8-alpine AS MAVEN_TOOL_CHAIN
+COPY pom.xml /tmp/
+COPY src /tmp/src/
+WORKDIR /tmp/
+RUN mvn package
+
 FROM tomcat:8
-# Take the war and copy to webapps of tomcat
-COPY target/*.war /usr/local/tomcat/webapps/
+COPY --from=MAVEN_TOOL_CHAIN /tmp/target/myweb*.war $CATALINA_HOME/webapps/myweb-0.0.1.war
